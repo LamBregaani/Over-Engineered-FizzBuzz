@@ -10,6 +10,10 @@ namespace Over_Engineered_FizzBuzz
         //General default string that classes can access
        public static string DefaultPath()
         {
+            //Checks if the folders exisiting the default directory
+            if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/FizzBuzzProgram/Data/"))
+                CreateDefaultFolders();
+
             return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/FizzBuzzProgram/Data/";
         }
 
