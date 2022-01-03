@@ -61,7 +61,7 @@ namespace Over_Engineered_FizzBuzz
 		//Command to create a new file
 		private static void CMDCreateNew(params object[] args)
         {
-			//This checks to see if a file was included with the initail command
+			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".CreateNew(FileName)" instead of just ".CreateNew"
 			Regex pattern = new Regex(@"\.CreateNew\((?<fileName>\w+)\)");
 
@@ -147,7 +147,7 @@ namespace Over_Engineered_FizzBuzz
 		//Command to delete an exisitng file
 		private static void CMDDelete(params object[] args)
         {
-			//This checks to see if a file was included with the initail command
+			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".Delete(FileName)" instead of just ".Delete"
 			Regex pattern = new Regex(@"\.Delete\((?<fileName>\w+)\)");
 
@@ -171,7 +171,7 @@ namespace Over_Engineered_FizzBuzz
 
 			commandRunning = true;
 
-			//This is run if a file wasn't included with the initail command or if the user included an invalid file
+			//This is run if a file name wasn't included with the initail command or if the user included an invalid file
 			//eg. ".Delete" instead of ".Delete(fileName)"
 			//Loops until a valid file name is input or a different command is run
 			while (true)
@@ -235,7 +235,7 @@ namespace Over_Engineered_FizzBuzz
 		private static void CMDView(params object[] args)
         {
 
-			//This checks to see if a file was included with the initail command
+			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".View(FileName)" instead of just ".View"
 			Regex pattern = new Regex(@"\.View\((?<fileName>\w+)\)");
 
@@ -263,7 +263,7 @@ namespace Over_Engineered_FizzBuzz
 
 			commandRunning = true;
 
-			//This is run if a file wasn't included with the initail command or if the user included an invalid file
+			//This is run if a file name wasn't included with the initail command or if the user included an invalid file
 			//eg. ".View" instead of ".View(fileName)"
 			//Loops until a valid file name is input or a different command is run
 			while (true)
@@ -298,7 +298,7 @@ namespace Over_Engineered_FizzBuzz
 		private static void CMDIterate(params object[] args)
 		{
 
-			//This checks to see if a file was included with the initail command
+			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".Run(FileName)" instead of just ".Run"
 
 			Regex pattern = new Regex(@"\.Run\((?<fileName>\w+)\)");
@@ -332,7 +332,7 @@ namespace Over_Engineered_FizzBuzz
 
 			commandRunning = true;
 
-			//This is run if a file wasn't included with the initail command or if the user included an invalid file
+			//This is run if a file name wasn't included with the initail command or if the user included an invalid file
 			//eg. ".Run" instead of ".Run(fileName)"
 			//Loops until a valid file name is input or a different command is run
 			while (true)
@@ -398,9 +398,6 @@ namespace Over_Engineered_FizzBuzz
 			Environment.Exit(0);
         }
 	}
-
-	
-	//I don't remember why this is here, but I don't know if I can move it without breaking everything
 
 
 	public struct Command
