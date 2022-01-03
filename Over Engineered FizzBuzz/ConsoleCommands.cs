@@ -208,16 +208,28 @@ namespace Over_Engineered_FizzBuzz
         {
 			var files = System.IO.Directory.GetFiles(FileCreator.DefaultPath());
 
-            foreach (var file in files)
+			Console.WriteLine("");
+
+			if(files.Length > 0)
             {
-				//Splits the file name into the seperate directories
-				var directories = file.Split("/");
+				foreach (var file in files)
+				{
+					//Splits the file name into the seperate directories
+					var directories = file.Split("/");
 
-				//Gets the last string ie. the name of the file
-				var name = directories[directories.Length - 1];
+					//Gets the last string ie. the name of the file
+					var name = directories[directories.Length - 1];
 
-				Console.WriteLine(name);
+					Console.WriteLine($"	{name}");
+				}
+			}
+			else
+            {
+				Console.WriteLine("		No files found");
             }
+
+			Console.WriteLine("");
+
         }
 
 		private static void CMDView(params object[] args)
