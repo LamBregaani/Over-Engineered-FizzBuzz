@@ -20,7 +20,7 @@ namespace Over_Engineered_FizzBuzz
 
             if (!File.Exists(path))
             {
-                Console.WriteLine($"'{fileName}' not found at {path}");
+                Console.WriteLine($"'{fileName}.txt' not found at {path}");
 
                 //Returns blank data due to file not existing
                 return CreateFBPRopertyData(data.ToArray());
