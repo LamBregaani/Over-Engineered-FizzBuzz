@@ -12,14 +12,35 @@ namespace Over_Engineered_FizzBuzz
         /// <param name="pattern"></param>
         /// <returns></returns>
         public static bool Validate(string input, string pattern)
-        {               
+        {
 
             Match match = Regex.Match(input, pattern);
 
-            if(match.Success)
+            if (match.Success)
             {
                 return true;
             }
+
+            return false;
+        }
+
+        public static bool HasMatch(string pattern, string input, out string matchString, string matchGroup)
+        {
+            //This checks to see if a file name was included with the initail command
+            //ie. the user inputs ".View(FileName)" instead of just ".View"
+            Regex regex = new Regex(pattern);
+
+            Match mat = regex.Match(input);
+
+            matchString = "";
+
+            if (mat.Success)
+            {
+                matchString = mat.Groups[matchGroup].Value;
+                return true;
+            }
+
+
 
             return false;
         }
@@ -31,18 +52,29 @@ namespace Over_Engineered_FizzBuzz
         /// <returns></returns>
         public static bool TryCommand(string input)
         {
-            Regex pattern = new Regex(@"\.(?<word>\w+)");
-            Match match = pattern.Match(input);
-
-            if(match.Success)
-            {
-                var command = match.Groups["word"].Value;
-
+            if(HasMatch(@"\.(?<command>\w+)", input, out string command, "command"))
+            { 
                 //Checks if the input is an existing command
                 if (ConsoleCommands.commands.ContainsKey(command))
                 {
-                    ConsoleCommands.commands[command].cmdDelegate(input);
-                    return true;
+                    if (ConsoleCommands.commands[command].takesParams)
+                    {
+                        if (Regex.IsMatch(input, @"^\.\w+\(\w+\)$"))
+                        {
+                            ConsoleCommands.commands[command].cmdDelegate(input);
+                            return true;
+                        }
+                    }
+                    if (Regex.IsMatch(input, @"^\.\w+$"))
+                    {
+                        ConsoleCommands.commands[command].cmdDelegate(input);
+                        return true;
+                    }
+                    else
+                    {
+                        Console.WriteLine("Invalid command syntax");
+                        return false;
+                    }
 
                 }
                 else
@@ -65,30 +97,18 @@ namespace Over_Engineered_FizzBuzz
         /// <returns></returns>
         public static bool TryCommand(string input, bool displayError)
         {
-            Regex pattern = new Regex(@"\.(?<word>\w+)");
-            Match match = pattern.Match(input);
-
-            if (match.Success)
+            //Returns true if the input starts with a '.'
+            if (Regex.IsMatch(input, @"^\."))
             {
-                var command = match.Groups["word"].Value;
-
-                //Checks if the input is an existing command
-                if (ConsoleCommands.commands.ContainsKey(command))
-                {
-                    ConsoleCommands.commands[command].cmdDelegate(input);
-                    return true;
-
-                }
-                else
-                {
-                    Console.WriteLine($"Command '.{command}' not found\n");
-                    return false;
-                }
+                return TryCommand(input);
             }
-            if(displayError)
+
+            //Displays an error message if 
+            else if(displayError)
             {
                 Console.WriteLine("Command must start with '.'\n");
             }
+
             return false;
         }
 
