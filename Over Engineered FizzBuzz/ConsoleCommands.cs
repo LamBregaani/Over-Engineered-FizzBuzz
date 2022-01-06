@@ -15,20 +15,17 @@ namespace Over_Engineered_FizzBuzz
 		//Loads the dictionary with the commands when a static method of this class is fist accessed 
 		static ConsoleCommands()
         {
-			AddCommand(new Command("CreateNew", "Create a new FizzBuzz property file", CMDCreateNew));
+			AddCommand(new Command("CreateNew", "Create a new FizzBuzz property file", CMDCreateNew, true));
 
 			AddCommand(new Command("CreateDefault", "Create a FizzBuzz property file with default values", CMDCreateDefault));
 
-			//Unused
-			//AddCommand(new Command("Load", "Load an existing FizzBuzz property file", CMDLoadFile));
+			AddCommand(new Command("Delete", "Delete an existing FizzBuzz property file", CMDDelete, true));
 
-			AddCommand(new Command("Delete", "Delete an existing FizzBuzz property file", CMDDelete));
+			AddCommand(new Command("Run", "Run the currently loaded FizzBuzz propety file", CMDIterate, true));
 
-			AddCommand(new Command("Run", "Run the currently loaded FizzBuzz propety file", CMDIterate));
+			AddCommand(new Command("ViewAll", "View the names of created files", CMDViewFiles));
 
-			AddCommand(new Command("ViewFiles", "View the names of created files", CMDViewFiles));
-
-			AddCommand(new Command("View", "View the FizzBuzz properties of a file", CMDView));
+			AddCommand(new Command("View", "View the FizzBuzz properties of a file", CMDView, true));
 
 			AddCommand(new Command("Help", "Display a list of commands", CMDHelp));
 
@@ -54,8 +51,6 @@ namespace Over_Engineered_FizzBuzz
             {
 				Console.WriteLine($"	.{cmd.Key} //{cmd.Value.description}");
             }
-
-			
         }
 
 		//Command to create a new file
@@ -63,14 +58,8 @@ namespace Over_Engineered_FizzBuzz
         {
 			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".CreateNew(FileName)" instead of just ".CreateNew"
-			Regex pattern = new Regex(@"\.CreateNew\((?<fileName>\w+)\)");
-
-			Match match = pattern.Match(args[0].ToString());
-
-			if (match.Success)
+			if (InputManager.HasMatch(@"\.\w+\((?<fileName>\w+)\)", args[0].ToString(), out string fileName, "fileName"))
 			{
-				var fileName = match.Groups["fileName"].Value;
-
 				//If a filename was included it passes the string the File Creator
 				FileCreator.CreateNew(fileName);
 				return;
@@ -86,88 +75,16 @@ namespace Over_Engineered_FizzBuzz
 			FileCreator.CreateDefault();
 		}
 
-		//Unused
-		//Command to load an existing file
-		//private static void CMDLoadFile(params object[] args)
-  //      {
-		//	Regex pattern = new Regex(@"\.Load\((?<fileName>\w+)\)");
-
-		//	Match match = pattern.Match(args[0].ToString());
-
-		//	if (match.Success)
-		//	{
-		//		var fileName = match.Groups["fileName"].Value;
-
-		//		var data = FileReader.LoadFile(fileName);
-
-		//		//If the iterations are > 0 the file is valid
-		//		if (data.Iterations != 0)
-		//		{
-		//			FizzBuzz.loadedData = data;
-		//			Console.WriteLine("File loaded. Use '.Run' to run the loaded file");
-
-		//			return;
-		//		}
-  //              else
-  //              {
-		//			Console.WriteLine($"{fileName}.txt not found");
-  //              }
-		//	}
-
-
-		//	commandRunning = true;
-
-		//	while (true)
-  //          {
-		//		Console.WriteLine("Input the name of the file to load\nDo not include the file extension");
-
-		//		var fileName = Console.ReadLine();
-
-		//		//Exits the current command loop if a command was run
-		//		if (InputManager.TryCommand(fileName))
-		//			break;
-
-
-		//		var data = FileReader.LoadFile(fileName);
-
-		//		//If the iterations are > 0 the file is valid
-		//		if(data.Iterations != 0)
-  //              {
-		//			FizzBuzz.loadedData = data;
-		//			Console.WriteLine("File loaded. Use '.Run' to run the loaded file");
-
-		//			break;
-  //              }
-		//	}
-
-		//	commandRunning = false;
-
-		//}
-
 		//Command to delete an exisitng file
 		private static void CMDDelete(params object[] args)
         {
 			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".Delete(FileName)" instead of just ".Delete"
-			Regex pattern = new Regex(@"\.Delete\((?<fileName>\w+)\)");
-
-			Match match = pattern.Match(args[0].ToString());
-
-			if (match.Success)
+			if (InputManager.HasMatch(@"\.\w+\((?<fileName>\w+)\)", args[0].ToString(), out string fileName, "fileName"))
 			{
-				var input = match.Groups["fileName"].Value;
-
-				if (FileCreator.DeleteFile(input + ".txt"))
-				{
+				if (FileCreator.DeleteFile(fileName))
 					return;
-				}
-				else
-				{
-					Console.WriteLine($"{input}.txt not found");
-				}
 			}
-
-
 
 			commandRunning = true;
 
@@ -178,20 +95,13 @@ namespace Over_Engineered_FizzBuzz
 			{
 				Console.WriteLine("Input the name of the file to delete\nDo not include the file extension");
 
-				var input = Console.ReadLine();
+				fileName = Console.ReadLine();
 
 				//Exits the current command loop if a command was run
-				if (InputManager.TryCommand(input))
+				if (InputManager.TryCommand(fileName))
 					break;
 
-				if (FileCreator.DeleteFile(input + ".txt"))
-				{
-					break;
-				}
-				else
-                {
-					Console.WriteLine($"{input}.txt not found");
-                }
+				FileCreator.DeleteFile(fileName);
 
 
 			}
@@ -232,19 +142,16 @@ namespace Over_Engineered_FizzBuzz
 
         }
 
+		/// <summary>
+		/// Views the properties of a specified file
+		/// </summary>
+		/// <param name="args"></param>
 		private static void CMDView(params object[] args)
         {
-
 			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".View(FileName)" instead of just ".View"
-			Regex pattern = new Regex(@"\.View\((?<fileName>\w+)\)");
-
-			Match match = pattern.Match(args[0].ToString());
-
-			if (match.Success)
-			{
-				var fileName = match.Groups["fileName"].Value;
-
+			if (InputManager.HasMatch(@"\.\w+\((?<fileName>\w+)\)",args[0].ToString(), out string fileName, "fileName"))
+            {
 				var data = FileReader.LoadFile(fileName);
 
 				//If the iterations are > 0 the file is valid
@@ -254,12 +161,7 @@ namespace Over_Engineered_FizzBuzz
 					FizzBuzz.DisplayProperties(data);
 					return;
 				}
-				else
-				{
-					Console.WriteLine($"{fileName}.txt not found");
-				}
 			}
-
 
 			commandRunning = true;
 
@@ -270,7 +172,7 @@ namespace Over_Engineered_FizzBuzz
 			{
 				Console.WriteLine("Input the name of the file to view\nDo not include the file extension");
 
-				var fileName = Console.ReadLine();
+				fileName = Console.ReadLine();
 
 				//Exits the current command loop if a command was run
 				if (InputManager.TryCommand(fileName))
@@ -286,30 +188,22 @@ namespace Over_Engineered_FizzBuzz
 					FizzBuzz.DisplayProperties(data);
 					return;
 				}
-				else
-				{
-					Console.WriteLine($"{fileName}.txt not found");
-				}
 			}
 
 			commandRunning = false;
 		}
 
+		/// <summary>
+		/// Iterates through a specified file
+		/// </summary>
+		/// <param name="args"></param>
 		private static void CMDIterate(params object[] args)
 		{
 
 			//This checks to see if a file name was included with the initail command
 			//ie. the user inputs ".Run(FileName)" instead of just ".Run"
-
-			Regex pattern = new Regex(@"\.Run\((?<fileName>\w+)\)");
-
-			Match match = pattern.Match(args[0].ToString());
-
-			//IF a file was inlcuded it checks if it is a valid file
-			if (match.Success)
+			if (InputManager.HasMatch(@"\.\w+\((?<fileName>\w+)\)", args[0].ToString(), out string fileName, "fileName"))
 			{
-				var fileName = match.Groups["fileName"].Value;
-
 				var data = FileReader.LoadFile(fileName);
 
 				//If the iterations are > 0 the file is valid
@@ -322,11 +216,6 @@ namespace Over_Engineered_FizzBuzz
 
 					//Breaks out of the method
 					return;
-				}
-				else
-				{
-					//Reports the error and continues to the next section
-					Console.WriteLine($"{fileName}.txt not found");
 				}
 			}
 
@@ -356,10 +245,6 @@ namespace Over_Engineered_FizzBuzz
 					Console.WriteLine($"Iterating {input}.txt");
 
 					return;
-				}
-				else
-				{
-					Console.WriteLine($"{input}.txt not found");
 				}
 			}
 
@@ -410,13 +295,28 @@ namespace Over_Engineered_FizzBuzz
 
 		public CMDDel cmdDelegate;
 
-		public Command(string nme,string desc, CMDDel del)
-        {
-			name = nme;
+		public bool takesParams;
+
+		public Command(string name, string desc, CMDDel del)
+		{
+			this.name = name;
 
 			description = desc;
 
 			cmdDelegate = del;
+
+			takesParams = false;
+		}
+
+		public Command(string name,string desc, CMDDel del, bool takesParameters)
+        {
+			this.name = name;
+
+			description = desc;
+
+			cmdDelegate = del;
+
+			takesParams = takesParameters;
         }
     }
 }
